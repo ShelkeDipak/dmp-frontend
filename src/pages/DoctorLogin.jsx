@@ -1,5 +1,4 @@
-// DoctorLogin.jsx ke top par
-const api = import.meta.env.VITE_BACKEND_URL;
+// ✅ DoctorLogin.jsx
 
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -7,6 +6,10 @@ import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { auth, googleProvider } from "../firebase";
 import { ArrowLeft } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+
+// ✅ Backend URL from environment (Render or local)
+const api = import.meta.env.VITE_BACKEND_URL;
+
 const DoctorLogin = () => {
   const navigate = useNavigate();
   const { user, setRole } = useAuth();
@@ -23,14 +26,28 @@ const DoctorLogin = () => {
     }
   }, [user, navigate]);
 
-  // ✅ Email/Password Login
+  // ✅ Email/Password Login with backend verification
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
 
-      // 🔸 Save doctor role
+      // 🔹 Get Firebase token
+      const token = await userCredential.user.getIdToken();
+
+      // 🔹 Verify doctor on backend
+      const res = await fetch(`${api}/verifyDoctor`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) throw new Error("Backend verification failed");
+
+      // 🔹 Save doctor role
       localStorage.setItem("userRole", "doctor");
       setRole("doctor");
 
@@ -41,13 +58,27 @@ const DoctorLogin = () => {
     }
   };
 
-  // ✅ Google Login
+  // ✅ Google Login with backend verification
   const handleGoogleLogin = async () => {
     setError("");
     try {
-      await signInWithPopup(auth, googleProvider);
+      const result = await signInWithPopup(auth, googleProvider);
 
-      // 🔸 Save doctor role
+      // 🔹 Get Firebase ID Token
+      const token = await result.user.getIdToken();
+
+      // 🔹 Send token to backend for verification
+      const res = await fetch(`${api}/verifyDoctor`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) throw new Error("Backend verification failed");
+
+      // 🔹 Save doctor role
       localStorage.setItem("userRole", "doctor");
       setRole("doctor");
 
