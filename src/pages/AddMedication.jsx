@@ -82,7 +82,7 @@ export default function AddMedication() {
     if (reminder) scheduleDailyNotification(medName, time);
 
     // ✅ Go to home after adding
-    navigate("/");
+    navigate("/patient-login");
   };
 
   return (
