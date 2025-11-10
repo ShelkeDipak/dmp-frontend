@@ -245,7 +245,7 @@ export default function AddMedication() {
           </button>
 
           <button
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/patient-login")}
             className="bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded-xl font-semibold"
           >
             Cancel

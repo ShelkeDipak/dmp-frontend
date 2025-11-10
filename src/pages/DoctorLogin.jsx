@@ -1,10 +1,12 @@
+// DoctorLogin.jsx ke top par
+const api = import.meta.env.VITE_BACKEND_URL;
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { auth, googleProvider } from "../firebase";
 import { ArrowLeft } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
-
 const DoctorLogin = () => {
   const navigate = useNavigate();
   const { user, setRole } = useAuth();
