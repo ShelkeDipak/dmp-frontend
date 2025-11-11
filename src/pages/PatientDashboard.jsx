@@ -6,7 +6,6 @@ import {
   Clock,
   RefreshCw,
   CheckCircle2,
-  UploadCloud,
 } from "lucide-react";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
@@ -101,17 +100,6 @@ export default function PatientDashboard() {
               <RefreshCw className="mx-auto mb-2 text-orange-600" size={28} />
               <div className="font-medium text-orange-800">Refill Tracker</div>
             </div>
-
-            {/* ✅ NEW BUTTON: Upload Test Results */}
-            <div
-              onClick={() => navigate("/upload-test-results")}
-              className="bg-purple-100 rounded-2xl p-6 text-center cursor-pointer hover:shadow-md transition col-span-2 sm:col-span-1"
-            >
-              <UploadCloud className="mx-auto mb-2 text-purple-600" size={28} />
-              <div className="font-medium text-purple-800">
-                Upload Test Results
-              </div>
-            </div>
           </div>
         </section>
 
@@ -138,7 +126,7 @@ export default function PatientDashboard() {
               </video>
 
               {/* Gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-b from-white via-white/90 to-black/80" />
+<div className="absolute inset-0 bg-gradient-to-b from-white via-white/90 to-black/80" />
             </div>
           </div>
         </section>
