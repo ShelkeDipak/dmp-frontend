@@ -1,98 +1,100 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
-import { useAuth } from "../context/AuthContext";
+import Navbar from "../components/Navbar";
 
-const api = import.meta.env.VITE_BACKEND_URL;
-
-const DoctorLogin = () => {
+export default function DoctorDashboard() {
   const navigate = useNavigate();
-  const { setRole } = useAuth();
-
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [doctorData, setDoctorData] = useState(null);
 
   useEffect(() => {
-    const role = localStorage.getItem("userRole");
-    if (role === "doctor") navigate("/doctor-dashboard");
-  }, [navigate]);
+    // Dummy doctor info
+    const dummyDoctor = {
+      name: "Dr. Aditi Verma",
+      specialization: "Cardiologist",
+      patients: [
+        { id: "PAT-001", name: "Ravi Sharma", age: 32, condition: "Fever" },
+        { id: "PAT-002", name: "Meena Patil", age: 45, condition: "Diabetes" },
+        { id: "PAT-003", name: "Arjun Mehta", age: 27, condition: "Asthma" },
+      ],
+    };
+    setDoctorData(dummyDoctor);
+  }, []);
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setError("");
-
-    try {
-      const res = await fetch(`${api}/auth/doctor/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) throw new Error(data.message || "Login failed");
-
-      // Save JWT token
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("userRole", "doctor");
-      setRole("doctor");
-
-      navigate("/doctor-dashboard");
-    } catch (err) {
-      console.error(err);
-      setError(err.message);
-    }
-  };
+  if (!doctorData) {
+    return (
+      <div className="flex justify-center items-center h-screen text-gray-600">
+        Loading Doctor Dashboard...
+      </div>
+    );
+  }
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-blue-100 to-blue-300 px-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 relative">
-        <button
-          onClick={() => navigate("/")}
-          className="absolute top-4 left-4 flex items-center text-gray-600 hover:text-blue-600 transition"
-        >
-          <ArrowLeft size={20} className="mr-1" /> Back
-        </button>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-100">
+      <Navbar />
 
-        <h2 className="text-3xl font-bold text-blue-600 text-center mt-4">
-          Doctor Login 🩺
-        </h2>
-        <p className="text-gray-500 text-center mb-6 text-sm">
-          Login to your Doctor Dashboard
-        </p>
+      <div className="pt-24 px-6 md:px-16">
+        {/* Header */}
+        <div className="flex flex-col md:flex-row justify-between items-center mb-8">
+          <div>
+            <h1 className="text-3xl font-semibold text-gray-700">
+              👨‍⚕️ Welcome, {doctorData.name}
+            </h1>
+            <p className="text-gray-500 text-lg">
+              Specialization: {doctorData.specialization}
+            </p>
+          </div>
 
-        {error && <p className="text-red-500 text-sm mb-3 text-center">{error}</p>}
-
-        <form onSubmit={handleLogin} className="space-y-4">
-          <input
-            type="email"
-            placeholder="Email"
-            className="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-300 outline-none"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-
-          <input
-            type="password"
-            placeholder="Password"
-            className="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-300 outline-none"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-
+          {/* View History Button */}
           <button
-            type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition shadow-sm"
+            onClick={() => navigate("/view-patient-history")}
+            className="mt-4 md:mt-0 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-md transition"
           >
-            Login
+            📋 View Patient History
           </button>
-        </form>
+        </div>
+
+        {/* Active Patients List */}
+        <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+            🧑‍🤝‍🧑 Active Patients
+          </h2>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-gray-700 border-collapse">
+              <thead>
+                <tr className="bg-gray-100 text-left">
+                  <th className="p-3">Patient ID</th>
+                  <th className="p-3">Name</th>
+                  <th className="p-3">Age</th>
+                  <th className="p-3">Condition</th>
+                  <th className="p-3">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {doctorData.patients.map((patient) => (
+                  <tr
+                    key={patient.id}
+                    className="border-t hover:bg-gray-50 transition"
+                  >
+                    <td className="p-3 font-medium">{patient.id}</td>
+                    <td className="p-3">{patient.name}</td>
+                    <td className="p-3">{patient.age}</td>
+                    <td className="p-3">{patient.condition}</td>
+                    <td className="p-3">
+                      <button
+                        onClick={() => navigate("/view-patient-history")}
+                        className="text-blue-600 hover:underline"
+                      >
+                        View History
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   );
-};
-
-export default DoctorLogin;
+}

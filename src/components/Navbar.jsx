@@ -32,6 +32,7 @@ export default function Navbar() {
   const handleLogout = async () => {
     try {
       await logout();
+      localStorage.removeItem("userRole");
       navigate("/");
       setMenuOpen(false);
     } catch (err) {
@@ -128,6 +129,7 @@ export default function Navbar() {
             ))}
           </nav>
 
+          {/* 👤 Profile Menu */}
           <div className="relative" ref={profileRef}>
             <img
               src={userPhoto}
@@ -138,22 +140,29 @@ export default function Navbar() {
 
             {showProfileMenu && (
               <div className="absolute right-0 mt-3 bg-white rounded-xl shadow-lg border border-gray-200 w-56 py-1 z-[999]">
-                {!user ? (
-                  <>
-                    <button
-                      onClick={() => navigate("/doctor-login")}
-                      className="w-full px-4 py-2 text-left hover:bg-blue-100"
-                    >
-                      👨‍⚕️ Doctor Dashboard
-                    </button>
-                    <button
-                      onClick={() => navigate("/patient-login")}
-                      className="w-full px-4 py-2 text-left hover:bg-green-100"
-                    >
-                      🧑‍🤝‍🧑 Patient Dashboard
-                    </button>
-                  </>
-                ) : (
+                <button
+                  onClick={() => {
+                    localStorage.setItem("userRole", "doctor");
+                    navigate("/doctor-dashboard");
+                    setShowProfileMenu(false);
+                  }}
+                  className="w-full px-4 py-2 text-left hover:bg-blue-100"
+                >
+                  👨‍⚕️ Doctor Dashboard
+                </button>
+
+                <button
+                  onClick={() => {
+                    localStorage.setItem("userRole", "patient");
+                    navigate("/patient-dashboard");
+                    setShowProfileMenu(false);
+                  }}
+                  className="w-full px-4 py-2 text-left hover:bg-green-100"
+                >
+                  🧑‍🤝‍🧑 Patient Dashboard
+                </button>
+
+                {user && (
                   <button
                     onClick={handleLogout}
                     className="w-full px-4 py-2 text-left text-red-600 hover:bg-red-100"
@@ -216,45 +225,35 @@ export default function Navbar() {
               </nav>
             </div>
 
-          
-           {/* 👤 Bottom Profile Section */}
-<div className="border-t border-gray-200 p-4 bg-gray-50 flex items-center justify-between">
-  <div className="flex items-center space-x-3">
-    <img
-      src={userPhoto}
-      alt="profile"
-      className="w-10 h-10 rounded-full border object-cover"
-    />
-    <div>
-      <p className="font-medium text-gray-800 text-sm">
-        {userName}
-      </p>
-      <p className="text-xs text-gray-500">
-        {user ? "Logged in" : "Guest"}
-      </p>
-    </div>
-  </div>
+            {/* 👤 Bottom Profile Section */}
+            <div className="border-t border-gray-200 p-4 bg-gray-50 flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <img
+                  src={userPhoto}
+                  alt="profile"
+                  className="w-10 h-10 rounded-full border object-cover"
+                />
+                <div>
+                  <p className="font-medium text-gray-800 text-sm">
+                    {userName}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    {user ? "Logged in" : "Guest"}
+                  </p>
+                </div>
+              </div>
 
-  {user ? (
-    <button
-      onClick={handleLogout}
-      className="text-sm text-red-600 hover:underline"
-    >
-      Logout
-    </button>
-  ) : (
-    <button
-      onClick={() => {
-        navigate("/"); // 👈 Go to Home page instead of /login
-        setMenuOpen(false); // close menu
-      }}
-      className="text-sm text-blue-600 hover:underline"
-    >
-      Login
-    </button>
-  )}
-</div>
-
+              <button
+                onClick={() => {
+                  localStorage.removeItem("userRole");
+                  handleLogout();
+                  setMenuOpen(false);
+                }}
+                className="text-sm text-red-600 hover:underline"
+              >
+                Logout
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -14,16 +14,14 @@ import DoctorLogin from "./pages/DoctorLogin";
 import PatientLogin from "./pages/PatientLogin";
 import Login from "./pages/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
-import { AuthProvider, useAuth } from "./context/AuthContext";
+import { AuthProvider } from "./context/AuthContext";
+import ViewPatientHistory from "./pages/ViewPatientHistory";
 
-// ✅ Role-based Protected Route Wrapper
+
+// ✅ Simplified Role-Based Route Protection (no Firebase login check)
 const RoleProtectedRoute = ({ children, role }) => {
-  const { user } = useAuth();
   const currentRole = localStorage.getItem("userRole");
-
-  if (!user) return <Navigate to="/" replace />;
   if (currentRole !== role) return <Navigate to="/" replace />;
-
   return children;
 };
 
@@ -32,14 +30,14 @@ export default function App() {
     <AuthProvider>
       <Router>
         <Routes>
-          {/* ✅ Public Routes */}
+          {/* Public Routes */}
           <Route path="/" element={<Home />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/login" element={<Login />} />
           <Route path="/doctor-login" element={<DoctorLogin />} />
           <Route path="/patient-login" element={<PatientLogin />} />
 
-          {/* ✅ Patient-Specific Protected Routes */}
+          {/* Patient Routes */}
           <Route
             path="/patient-dashboard"
             element={
@@ -81,7 +79,7 @@ export default function App() {
             }
           />
 
-          {/* ✅ Doctor-Specific Protected Routes */}
+          {/* Doctor Routes */}
           <Route
             path="/doctor-dashboard"
             element={
@@ -114,8 +112,15 @@ export default function App() {
               </RoleProtectedRoute>
             }
           />
-
-          {/* ✅ Default Fallback */}
+          <Route
+            path="/view-patient-history"
+            element={
+              <RoleProtectedRoute role="doctor">
+                <ViewPatientHistory />
+              </RoleProtectedRoute>
+            }
+          />
+          {/* Fallback */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>

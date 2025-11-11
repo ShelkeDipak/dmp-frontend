@@ -1,11 +1,19 @@
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMedications } from "../context/MedicationContext";
 import Navbar from "../components/Navbar";
-import homeImage from "../assets/home-Img.png"; // ✅ Ensure path & filename match exactly
+import homeImage from "../assets/home-Img.png";
 
 export default function Home() {
   const navigate = useNavigate();
   const { medications } = useMedications();
+
+  // 🧠 Remember previous role (auto redirect)
+  useEffect(() => {
+    const savedRole = localStorage.getItem("userRole");
+    if (savedRole === "doctor") navigate("/doctor-dashboard");
+    else if (savedRole === "patient") navigate("/patient-dashboard");
+  }, [navigate]);
 
   const today = new Date();
   const formattedDate = today.toLocaleDateString("en-US", {
@@ -25,14 +33,24 @@ export default function Home() {
     return "#22c55e";
   };
 
+  // ✅ Direct redirect functions
+  const handleDoctorClick = () => {
+    localStorage.setItem("userRole", "doctor"); // store role
+    navigate("/doctor-dashboard");
+  };
+
+  const handlePatientClick = () => {
+    localStorage.setItem("userRole", "patient");
+    navigate("/patient-dashboard");
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-cyan-100 to-teal-200">
       {/* Navbar */}
- 
+      <Navbar />
 
       {/* Main Section */}
       <main className="flex-grow flex flex-col md:flex-row items-center justify-center px-6 py-10 gap-10 text-center md:text-left">
-        
         {/* Left Section - Image */}
         <div className="flex justify-center md:w-1/2">
           <img
@@ -54,20 +72,20 @@ export default function Home() {
             Today: {formattedDate}
           </p>
 
-          {/* Doctor Login */}
+          {/* Doctor Dashboard Button */}
           <button
-            onClick={() => navigate("/doctor-login")}
+            onClick={handleDoctorClick}
             className="mt-6 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl shadow-md transition duration-300 w-52"
           >
-            Doctor Login 🩺
+            Doctor Dashboard 🩺
           </button>
 
-          {/* Patient Login */}
+          {/* Patient Dashboard Button */}
           <button
-            onClick={() => navigate("/patient-login")}
+            onClick={handlePatientClick}
             className="mt-3 px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-2xl shadow-md transition duration-300 w-52"
           >
-            Patient Login 💊
+            Patient Dashboard 💊
           </button>
         </div>
       </main>
