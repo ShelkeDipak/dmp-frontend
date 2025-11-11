@@ -16,6 +16,7 @@ import Login from "./pages/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthProvider } from "./context/AuthContext";
 import ViewPatientHistory from "./pages/ViewPatientHistory";
+import UploadTestResults from "./pages/UploadTestResults";
 
 
 // ✅ Simplified Role-Based Route Protection (no Firebase login check)
@@ -120,6 +121,8 @@ export default function App() {
               </RoleProtectedRoute>
             }
           />
+          <Route path="/upload-test-results" element={<UploadTestResults />} />
+
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
