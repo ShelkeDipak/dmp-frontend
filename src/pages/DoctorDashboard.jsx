@@ -1,10 +1,13 @@
 // src/pages/DoctorDashboard.jsx
 import { useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { FileUp, ClipboardList, FileText, Signature, Download } from "lucide-react";
 import jsPDF from "jspdf";
 import Navbar from "../components/Navbar"; // ✅ Import Navbar
 
 export default function DoctorDashboard() {
+  const navigate = useNavigate();
+
   const [prescription, setPrescription] = useState({
     patientName: "",
     age: "",
@@ -88,29 +91,54 @@ export default function DoctorDashboard() {
       {/* ✅ Navbar */}
       <Navbar />
 
-      <div className="p-4 sm:p-8 md:p-12 mt-24"> {/* Added top margin to avoid overlap with fixed navbar */}
+      <div className="p-4 sm:p-8 md:p-12 mt-24">
         <h1 className="text-3xl sm:text-4xl font-bold text-blue-700 mb-8 text-center">
           🩺 Doctor Dashboard
         </h1>
 
-        {/* Quick Action Cards */}
+        {/* ✅ Quick Action Cards (Clickable) */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 mb-10">
-          {[
-            { icon: <ClipboardList className="mx-auto mb-2 text-blue-600" size={28} />, label: "Create Prescription" },
-            { icon: <FileText className="mx-auto mb-2 text-green-600" size={28} />, label: "View Patient History" },
-            { icon: <FileUp className="mx-auto mb-2 text-yellow-600" size={28} />, label: "Upload Test Results" },
-            { icon: <Signature className="mx-auto mb-2 text-purple-600" size={28} />, label: "Add E-Signature" },
-          ].map((item, index) => (
-            <div
-              key={index}
-              className="bg-white p-4 sm:p-6 rounded-2xl shadow hover:shadow-xl transition text-center cursor-pointer"
-            >
-              {item.icon}
-              <h3 className="font-medium text-gray-800 text-sm sm:text-base">
-                {item.label}
-              </h3>
-            </div>
-          ))}
+          {/* Create Prescription */}
+          <div
+            className="bg-white p-4 sm:p-6 rounded-2xl shadow hover:shadow-xl transition text-center cursor-pointer"
+          >
+            <ClipboardList className="mx-auto mb-2 text-blue-600" size={28} />
+            <h3 className="font-medium text-gray-800 text-sm sm:text-base">
+              Create Prescription
+            </h3>
+          </div>
+
+          {/* View Patient History */}
+          <div
+            onClick={() => navigate("/view-patient-history")}
+            className="bg-white p-4 sm:p-6 rounded-2xl shadow hover:shadow-xl transition text-center cursor-pointer"
+          >
+            <FileText className="mx-auto mb-2 text-green-600" size={28} />
+            <h3 className="font-medium text-gray-800 text-sm sm:text-base">
+              View Patient History
+            </h3>
+          </div>
+
+          {/* Upload Test Results */}
+          <div
+            onClick={() => navigate("/upload-test-results")}
+            className="bg-white p-4 sm:p-6 rounded-2xl shadow hover:shadow-xl transition text-center cursor-pointer"
+          >
+            <FileUp className="mx-auto mb-2 text-yellow-600" size={28} />
+            <h3 className="font-medium text-gray-800 text-sm sm:text-base">
+              Upload Test Results
+            </h3>
+          </div>
+
+          {/* Add E-Signature */}
+          <div
+            className="bg-white p-4 sm:p-6 rounded-2xl shadow hover:shadow-xl transition text-center cursor-pointer"
+          >
+            <Signature className="mx-auto mb-2 text-purple-600" size={28} />
+            <h3 className="font-medium text-gray-800 text-sm sm:text-base">
+              Add E-Signature
+            </h3>
+          </div>
         </div>
 
         {/* Prescription Form */}
